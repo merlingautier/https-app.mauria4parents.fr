@@ -172,7 +172,7 @@ h1{font-size:30px;line-height:39px}h2{font-size:25px;line-height:32px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
 @media print{.site-header,.bottom-nav,.ambient,.header-menu,.page-actions,.filter-bar,.toast{display:none!important}.page-content{padding:0;min-height:0}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}body{background:white}.dialog-sheet[open]{position:relative;display:block;max-height:none;height:auto}.dialog-sheet::backdrop{display:none}}
 
-/* Planning : grille de référence du 16 au 21 novembre 2026. */
+/* Planning : grille du lundi au samedi. */
 .pl-screen { min-width: 0; }
 .pl-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; height: 46px; margin-bottom: 39px; }
 .pl-heading h1 { margin: 0; color: var(--purple); font-family: Arial, sans-serif; font-size: 38px; line-height: 1.2; font-weight: 700; }
@@ -492,8 +492,8 @@ h1{font-size:30px;line-height:39px}h2{font-size:25px;line-height:32px}
           <span class="home-course-meta"><span class="meta-time">${icon('clock')}15:30 - 17:30</span><span class="meta-room">${icon('pin')}J006 BDE</span>${icon('external','course-expand')}</span>
         </button>
       </section>`;
-    document.getElementById('home-current-course').addEventListener('click', () => window.MauriaPlanning.showEvent('ref-revisions'));
-    document.getElementById('home-next-course').addEventListener('click', () => window.MauriaPlanning.showEvent('ref-asso'));
+    document.getElementById('home-current-course').addEventListener('click', () => window.MauriaPlanning.showEvent('mauria-0f18dcc3-0233-44dc-8e3d-2a253b0f67d0'));
+    document.getElementById('home-next-course').addEventListener('click', () => window.MauriaPlanning.showEvent('mauria-4250ff42-0b86-4f0d-b3f1-e1b7875a0524'));
   }
   function renderAbsences() {
     const filters = [['all','Tout'],['yes','Justifié'],['no','Non justifié']];
@@ -591,28 +591,95 @@ h1{font-size:30px;line-height:39px}h2{font-size:25px;line-height:32px}
 /* Composant autonome. Les données initiales reproduisent les captures fournies. */
 (function () {
   'use strict';
-  const BASE_MONDAY = '2026-11-16';
-  const REFERENCE_DAY = '2026-11-19';
+  const PARIS_CLOCK = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+  });
   const FIRST_HOUR = 7;
   const LAST_HOUR = 21;
   const HOUR_HEIGHT = 62;
   const STORE_KEY = 'planningEvents';
   const SHORT_DAYS = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];
-  const REFERENCE_EVENTS = [
-    { id: 'ref-elec', date: '2026-11-16', start: 540, end: 720, room: 'J003 SALLE COURS INFORMATIQUE', title: '[ADI1] Electronique numérique 1', person: 'Projet M. DIET', green: true },
-    { id: 'ref-meca', date: '2026-11-16', start: 780, end: 960, room: 'J104 COURS', title: '[ADI1] Mécanique du point S1', person: 'Cours M. LARROQUE' },
-    { id: 'ref-machines', date: '2026-11-17', start: 540, end: 750, room: 'J001 FABLAB', title: '[ADI1] Machines Outils 1', person: 'TP M. VIOT' },
-    { id: 'ref-web', date: '2026-11-18', start: 540, end: 720, room: 'J104 COURS', title: '[ADI1] Web 1', person: 'Cours M. DIET' },
-    { id: 'ref-francais', date: '2026-11-18', start: 810, end: 990, room: 'J104 COURS', title: '[ADI1] Français 1', person: 'Cours Mme CROMBET' },
-    { id: 'ref-revisions', date: '2026-11-19', start: 810, end: 930, room: 'J104 COURS', title: 'Travail personnel : temps de révisions', person: 'Auto-apprentissage M. PONASSIE' },
-    { id: 'ref-asso', date: '2026-11-19', start: 930, end: 1050, room: 'J006 BDE', title: 'Associatif', person: 'Mme BRULATOUT' },
-    { id: 'ref-tech', date: '2026-11-20', start: 540, end: 750, room: 'J001 FABLAB', title: '[ADI1] Projets Techniques S1', person: 'Projet Mme NICOL', green: true },
-    { id: 'ref-semestre', date: '2026-11-20', start: 810, end: 1020, room: 'J001 FABLAB', title: '[ADI1] Projet de Semestre 1', person: 'Projet M. VIOT', green: true }
+  const MAURIA_EVENTS = [
+    {"id":"mauria-99f22c93-d773-4955-8d6c-d364327c4393","date":"2026-11-16","start":540,"end":720,"room":"J003 SALLE COURS INFORMATIQUE","title":"[ADI1] Electronique numérique 1","person":"Projet M. DIET","green":true},
+    {"id":"mauria-b673a4fa-33ff-4ba5-9501-4756e2eef290","date":"2026-11-16","start":780,"end":960,"room":"J104 COURS","title":"[ADI1] Mécanique du point S1","person":"Cours M. LARROQUE"},
+    {"id":"mauria-50eb5a3e-9a21-4a5e-b7b1-582c0349ebc1","date":"2026-11-17","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Machines Outils 1","person":"TP M. VIOT"},
+    {"id":"mauria-ca4f3981-829e-41d7-bb49-03df8baec355","date":"2026-11-18","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Web 1","person":"Cours M. DIET"},
+    {"id":"mauria-a9fe74b6-4457-4e79-ad4a-c3ea9f05b59d","date":"2026-11-18","start":810,"end":990,"room":"J104 COURS","title":"[ADI1] Français 1","person":"Cours Mme CROMBET"},
+    {"id":"mauria-0f18dcc3-0233-44dc-8e3d-2a253b0f67d0","date":"2026-11-19","start":810,"end":930,"room":"J104 COURS","title":"Travail personnel : temps de révisions","person":"Auto-apprentissage M. PONASSIE"},
+    {"id":"mauria-4250ff42-0b86-4f0d-b3f1-e1b7875a0524","date":"2026-11-19","start":930,"end":1050,"room":"J006 BDE","title":"Associatif","person":"Associatif Mme BRULATOUT"},
+    {"id":"mauria-6ef5d089-f878-438e-a81b-55bc73840f62","date":"2026-11-20","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projets Techniques S1","person":"Projet Mme NICOL","green":true},
+    {"id":"mauria-3c32c7cd-9751-488e-afc5-f8f1441a876d","date":"2026-11-20","start":810,"end":1020,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-175b9380-b2d0-4f48-aab1-4e7d9de5bd9e","date":"2026-11-23","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Electronique numérique 1","person":"TD M. DIET"},
+    {"id":"mauria-8ff094e4-2751-4e85-b622-369abfbf7fab","date":"2026-11-23","start":780,"end":960,"room":"J104 COURS","title":"[ADI1] Mécanique du point S1","person":"Cours M. LARROQUE"},
+    {"id":"mauria-383e0385-d796-482f-9529-731656e29ab5","date":"2026-11-24","start":570,"end":720,"room":"J104 COURS","title":"[ADI1] Bureautique 1","person":"Auto-apprentissage M. PONASSIE"},
+    {"id":"mauria-c5c51c6e-3e3a-4faf-9c39-b9a8ef919ba9","date":"2026-11-24","start":810,"end":990,"room":"J104 COURS","title":"[ADI1] Calcul différentiel et calcul intégral","person":"Cours M. MOKRANI"},
+    {"id":"mauria-ee880215-cd06-46fb-a1f5-c1e8b387d5e5","date":"2026-11-25","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Web 1","person":"Cours M. DIET"},
+    {"id":"mauria-28085b4d-73e8-480c-97b9-bc857e4bdc76","date":"2026-11-25","start":810,"end":990,"room":"J104 COURS","title":"[ADI1] Français 1","person":"Cours Mme CROMBET"},
+    {"id":"mauria-a7c738bc-197e-47e1-8c44-7c9e8ee8f7d5","date":"2026-11-26","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. MOKRANI","green":true},
+    {"id":"mauria-84724c12-96c0-4ad0-99f7-c01e64e4a258","date":"2026-11-26","start":810,"end":900,"room":"J103 COURS","title":"[ADI1] Calcul différentiel et calcul intégral","person":"Devoir surveillé Mme LANGNER"},
+    {"id":"mauria-62d3b1c4-b2ac-49d4-a8bc-0dbb251e734b","date":"2026-11-26","start":930,"end":960,"room":"J006 BDE","title":"Associatif","person":"Associatif Mme BRULATOUT"},
+    {"id":"mauria-8ae03ce1-27c2-4645-b1a1-186db1acdb69","date":"2026-11-26","start":960,"end":1050,"room":"J006 BDE","title":"Associatif","person":"Associatif Mme BRULATOUT"},
+    {"id":"mauria-c61e083a-f805-4922-889f-c66f5b5612a3","date":"2026-11-27","start":510,"end":540,"room":"J103 COURS","title":"Bourses, aides aux étudiants (OBLIGATOIRE)","person":"Réunion M. BIELA"},
+    {"id":"mauria-c3d29f8d-fbdd-4041-91b9-f40b2a84f00d","date":"2026-11-27","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projets Techniques S1","person":"Projet Mme NICOL","green":true},
+    {"id":"mauria-33df3837-ceda-4414-ac33-6de5fc18d5ff","date":"2026-11-27","start":810,"end":1020,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-0efca615-272e-4ab0-bcf5-0abfc3025332","date":"2026-11-30","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Electronique numérique 1","person":"Projet M. DIET","green":true},
+    {"id":"mauria-dbe7386e-0a5f-4113-af84-24b91a6dfd58","date":"2026-11-30","start":780,"end":960,"room":"J104 COURS","title":"[ADI1] Bureautique 1","person":"Auto-apprentissage M. PONASSIE"},
+    {"id":"mauria-e9f03ba0-f082-4261-a84a-131697ed83de","date":"2026-12-01","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Calcul différentiel et calcul intégral","person":"Cours M. MOKRANI"},
+    {"id":"mauria-f7841979-f927-48df-af1c-985a29b6828f","date":"2026-12-01","start":780,"end":960,"room":"J003 SALLE COURS INFORMATIQUE","title":"[ADI1] Electronique numérique 1","person":"TP M. DIET"},
+    {"id":"mauria-0e8de907-57e3-4950-844a-069ed62559fe","date":"2026-12-02","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Calcul différentiel et calcul intégral","person":"Cours M. MOKRANI"},
+    {"id":"mauria-6e9a0c06-4e6f-434f-868f-8e2ae2bd473c","date":"2026-12-02","start":810,"end":990,"room":"J104 COURS","title":"[ADI1] Français 1","person":"Cours Mme CROMBET"},
+    {"id":"mauria-291636f7-8669-42ca-9b24-b0f83e28d0f0","date":"2026-12-03","start":540,"end":660,"room":"J103 COURS","title":"[ADI1] Mécanique du point S1","person":"Examen Mme LANGNER"},
+    {"id":"mauria-e660a81f-173b-4136-a9c4-ddd8cfa32f79","date":"2026-12-03","start":780,"end":900,"room":"J005 SALLE CODESIGN","title":"[ADI1] Gestion de Projet 1","person":"Examen Mme LANGNER"},
+    {"id":"mauria-b257d95d-6430-42e9-a74e-3905ce54bc8f","date":"2026-12-03","start":930,"end":1050,"room":"J006 BDE","title":"Associatif","person":"Associatif Mme BRULATOUT"},
+    {"id":"mauria-e2d821ec-9422-4b95-a30c-d3044a133c97","date":"2026-12-04","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projets Techniques S1","person":"Soutenance Mme NICOL"},
+    {"id":"mauria-9802c048-b650-49fa-819f-9f050eec5545","date":"2026-12-04","start":810,"end":1020,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-5177178d-7b90-4c99-8452-0e2d45dee94e","date":"2026-12-07","start":600,"end":660,"room":"J103 COURS","title":"[ADI1] Web 1","person":"Examen Mme LANGNER"},
+    {"id":"mauria-129661d8-00ed-4bfe-af01-1920d43e0c29","date":"2026-12-07","start":810,"end":1020,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-bdf87600-f556-4556-8d4c-a6b2cefa6465","date":"2026-12-08","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Calcul différentiel et calcul intégral","person":"Cours M. MOKRANI"},
+    {"id":"mauria-4362d5ec-489c-4a0b-af03-142e99850696","date":"2026-12-08","start":780,"end":1080,"room":"Mauria","title":"[ADI1] Découverte Entreprise et Recherche S1","person":"Visite M. DEVIENNE"},
+    {"id":"mauria-37d59dd3-aeaa-47d0-a673-73f4f5929ad9","date":"2026-12-09","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Electronique numérique 1","person":"Projet M. DIET","green":true},
+    {"id":"mauria-410ac6ee-c8a2-4e0a-8e5b-ede3a32bcb8c","date":"2026-12-09","start":810,"end":990,"room":"J104 COURS","title":"[ADI1] Français 1","person":"Cours Mme CROMBET"},
+    {"id":"mauria-e651b639-7c02-4ab8-87e7-c0054bec6b57","date":"2026-12-10","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. MOKRANI","green":true},
+    {"id":"mauria-dc56f66c-ec20-40e7-95c6-236f9fb57423","date":"2026-12-10","start":930,"end":1050,"room":"J006 BDE","title":"Associatif","person":"Associatif Mme BRULATOUT"},
+    {"id":"mauria-0efc47f5-aecf-4391-9200-6336a8afaf7c","date":"2026-12-11","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-2da9cbf8-bb54-4349-858e-59077674a6e2","date":"2026-12-11","start":810,"end":1020,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-0f98e11b-ca90-4c1b-89e5-52da9013a7c9","date":"2026-12-14","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Gestion de Projet 1","person":"Cours M. PONASSIE"},
+    {"id":"mauria-cb9f8a04-bbc8-41af-950e-a38b50204fd3","date":"2026-12-14","start":810,"end":1020,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-50a04668-7995-4ebb-bcf4-5459080689ce","date":"2026-12-15","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Calcul différentiel et calcul intégral","person":"Cours M. MOKRANI"},
+    {"id":"mauria-d212416b-f573-4aa8-aa47-bbfbab2ce923","date":"2026-12-16","start":540,"end":720,"room":"J003 SALLE COURS INFORMATIQUE","title":"[ADI1] Electronique numérique 1","person":"TD M. DIET"},
+    {"id":"mauria-be8da261-ed2e-4fff-b8a2-52f61b263bce","date":"2026-12-16","start":810,"end":990,"room":"J104 COURS","title":"[ADI1] Français 1","person":"Cours Mme CROMBET"},
+    {"id":"mauria-3d49746d-3491-4e64-8a10-851d6adfafb7","date":"2026-12-17","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. MOKRANI","green":true},
+    {"id":"mauria-a30925f4-a8f6-4fc7-8045-d57c3d4e47e5","date":"2026-12-17","start":930,"end":960,"room":"J006 BDE","title":"Associatif","person":"Associatif Mme BRULATOUT"},
+    {"id":"mauria-a8d7864c-f564-463b-bc1b-55aa09a0961e","date":"2026-12-17","start":960,"end":1050,"room":"J006 BDE","title":"Associatif","person":"Associatif Mme BRULATOUT"},
+    {"id":"mauria-417b91ff-286a-408d-96fc-c59a786fc30d","date":"2026-12-18","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-feca4370-ec3a-4ca9-b91c-74f30ce405a3","date":"2026-12-18","start":810,"end":1020,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-037caded-d181-4fd7-a00c-ca8143f2506b","date":"2027-01-04","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-fb67c509-d431-4dd6-b4be-e078b789d381","date":"2027-01-04","start":810,"end":1020,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-11e0a812-68d7-4b3a-a7ed-5b850443a8a1","date":"2027-01-05","start":540,"end":720,"room":"J104 COURS","title":"[ADI1] Calcul différentiel et calcul intégral","person":"Soutenance M. MOKRANI"},
+    {"id":"mauria-663528e4-6346-413c-8ba8-a989f4a4cf75","date":"2027-01-05","start":810,"end":930,"room":"J007A RIO","title":"Travail personnel : temps de révisions","person":"Auto-apprentissage M. PONASSIE"},
+    {"id":"mauria-d2e4d10a-caea-4d92-b9e9-c59a7548cac7","date":"2027-01-06","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Soutenance M. MOKRANI"},
+    {"id":"mauria-90352a91-4473-4124-abaa-1b940bd4196a","date":"2027-01-06","start":970,"end":1030,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Projet M. VIOT","green":true},
+    {"id":"mauria-563c0bdd-221f-4470-a058-592fc5ee3e44","date":"2027-01-07","start":540,"end":750,"room":"J001 FABLAB","title":"[ADI1] Projet de Semestre 1","person":"Soutenance M. MOKRANI"},
+    {"id":"mauria-87b8543a-197d-453d-b776-21ed0035f1e8","date":"2027-01-07","start":810,"end":930,"room":"J007A RIO","title":"Travail personnel : temps de révisions","person":"Auto-apprentissage M. PONASSIE"},
+    {"id":"mauria-4760ef53-7f3e-46f0-946e-3e239fbf38f7","date":"2027-01-07","start":930,"end":1050,"room":"J006 BDE","title":"Associatif","person":"Associatif Mme BRULATOUT"},
+    {"id":"mauria-9060b294-dfc2-470a-a2af-3cc400ed0eff","date":"2027-01-08","start":570,"end":660,"room":"J103 COURS","title":"[ADI1] Calcul différentiel et calcul intégral","person":"Examen Mme LANGNER"},
+    {"id":"mauria-13436094-3b35-4af1-9398-a0ec714bf923","date":"2027-01-08","start":780,"end":900,"room":"J103 COURS","title":"[ADI1] Electronique numérique 1","person":"Examen Mme LANGNER"},
+    {"id":"mauria-f67e742f-5837-4915-be42-e96f95e0677a","date":"2027-01-11","start":510,"end":780,"room":"J109 CLASSLAB","title":"[ADI1] Séminaire 2","person":"Cours Mme GAUJARD"},
+    {"id":"mauria-ada0b4d9-4048-474d-a9f0-a0ea04570ee4","date":"2027-01-11","start":840,"end":900,"room":"J104 COURS","title":"[ADI1] Séminaire 2","person":"Auto-apprentissage Mme GAUJARD"},
+    {"id":"mauria-8d20a508-020a-4eb2-8af0-b9ddaae5ccb1","date":"2027-01-12","start":510,"end":780,"room":"J109 CLASSLAB","title":"[ADI1] Séminaire 2","person":"Cours Mme GAUJARD"},
+    {"id":"mauria-c00ec925-c98e-4bf5-8f28-9d4f19c969f7","date":"2027-01-12","start":840,"end":900,"room":"J104 COURS","title":"[ADI1] Séminaire 2","person":"Auto-apprentissage Mme GAUJARD"},
+    {"id":"mauria-51ac1ec5-2a12-4618-9b20-0baed51acb94","date":"2027-01-13","start":480,"end":660,"room":"J104 COURS","title":"[ADI1] Géométrie dans le plan et dans l'espace","person":"Cours M. MOKRANI"},
+    {"id":"mauria-e5f32ba3-5add-4a2b-a03f-903ece2f66c1","date":"2027-01-13","start":680,"end":740,"room":"J104 COURS","title":"[ADI1] Séminaire 2","person":"Auto-apprentissage Mme GAUJARD"},
+    {"id":"mauria-d3368359-d361-49e0-84b6-ac8ffd8636e7","date":"2027-01-14","start":510,"end":780,"room":"J109 CLASSLAB","title":"[ADI1] Séminaire 2","person":"Cours Mme GAUJARD"},
+    {"id":"mauria-60215210-2db3-4055-a511-98f27ad52e12","date":"2027-01-14","start":840,"end":900,"room":"J104 COURS","title":"[ADI1] Séminaire 2","person":"Auto-apprentissage Mme GAUJARD"},
+    {"id":"mauria-5c7a8ca3-72f4-440f-821b-12eda2b4e23e","date":"2027-01-14","start":930,"end":1050,"room":"J006 BDE","title":"Associatif","person":"Associatif Mme BRULATOUT"}
   ];
   let host;
   let mode = window.innerWidth <= 700 ? 'day' : 'week';
-  let weekStart = BASE_MONDAY;
-  let selectedDay = REFERENCE_DAY;
+  let selectedDay = parisClock().date;
+  if (dateObject(selectedDay).getDay() === 0) selectedDay = shift(selectedDay, 1);
+  let weekStart = monday(selectedDay);
   let localEvents = [];
 
   function api() { return window.Mauria; }
@@ -629,7 +696,11 @@ h1{font-size:30px;line-height:39px}h2{font-size:25px;line-height:32px}
   function longDate(iso) { return dateObject(iso).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
   function shortDate(iso) { const d = dateObject(iso); return SHORT_DAYS[d.getDay()] + ' ' + String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0'); }
   function validDate(iso) { return /^\d{4}-\d{2}-\d{2}$/.test(iso) && !Number.isNaN(dateObject(iso).getTime()) && dateISO(dateObject(iso)) === iso; }
-  function allEvents() { return REFERENCE_EVENTS.concat(localEvents); }
+  function parisClock() {
+    const parts = Object.fromEntries(PARIS_CLOCK.formatToParts(new Date()).map(({ type, value }) => [type, value]));
+    return { date: parts.year + '-' + parts.month + '-' + parts.day, minutes: Number(parts.hour) * 60 + Number(parts.minute) };
+  }
+  function allEvents() { return MAURIA_EVENTS.concat(localEvents); }
   function loadEvents() {
     const value = api().read(STORE_KEY, []);
     localEvents = Array.isArray(value) ? value.filter(e => e && typeof e.id === 'string' && typeof e.title === 'string' && typeof e.date === 'string' && validDate(e.date) && Number.isFinite(e.start) && Number.isFinite(e.end) && e.start >= 420 && e.end <= 1260 && e.end > e.start).map(e => ({ ...e, local: true })) : [];
@@ -647,6 +718,9 @@ h1{font-size:30px;line-height:39px}h2{font-size:25px;line-height:32px}
     if (!host) return;
     const dates = mode === 'day' ? [selectedDay] : Array.from({ length: 6 }, (_, index) => shift(weekStart, index));
     const events = allEvents();
+    const now = parisClock();
+    const nowInGrid = now.minutes >= FIRST_HOUR * 60 && now.minutes < LAST_HOUR * 60;
+    const nowTop = (now.minutes / 60 - FIRST_HOUR) * HOUR_HEIGHT;
     const hasEvents = events.some(event => dates.includes(event.date));
     host.innerHTML = '<div class="pl-screen">' +
       '<div class="pl-heading"><h1>Planning</h1><div class="pl-heading-actions">' +
@@ -661,11 +735,11 @@ h1{font-size:30px;line-height:39px}h2{font-size:25px;line-height:32px}
       '<div class="pl-calendar-scroll"><div class="pl-calendar' + (mode === 'day' ? ' pl-day-view' : '') + '" aria-label="Planning des cours">' +
       '<div class="pl-corner" aria-hidden="true"></div>' + dates.map((date, i) => '<div class="pl-day-heading' + (i === dates.length - 1 ? ' pl-last-heading' : '') + '">' + esc(shortDate(date)) + '</div>').join('') +
       '<div class="pl-time-column" aria-hidden="true">' + Array.from({ length: LAST_HOUR - FIRST_HOUR }, (_, i) => '<div class="pl-time-label">' + String(i + FIRST_HOUR).padStart(2, '0') + ' h</div>').join('') +
-      (dates.includes(REFERENCE_DAY) ? '<span class="pl-now-arrow" style="top:' + (((14 + 25 / 60) - FIRST_HOUR) * HOUR_HEIGHT) + 'px"></span>' : '') + '</div>' +
-      dates.map(date => '<div class="pl-day-column' + (date === REFERENCE_DAY ? ' pl-reference-day' : '') + '" role="group" aria-label="' + esc(longDate(date)) + '">' +
+      (nowInGrid && dates.includes(now.date) ? '<span class="pl-now-arrow" style="top:' + nowTop + 'px"></span>' : '') + '</div>' +
+      dates.map(date => '<div class="pl-day-column' + (date === now.date ? ' pl-reference-day' : '') + '" role="group" aria-label="' + esc(longDate(date)) + '">' +
         Array.from({ length: LAST_HOUR - FIRST_HOUR }, () => '<div class="pl-hour-row" aria-hidden="true"></div>').join('') +
         renderDayEvents(events.filter(event => event.date === date)) +
-        (date === REFERENCE_DAY ? '<div class="pl-now-line" style="top:' + (((14 + 25 / 60) - FIRST_HOUR) * HOUR_HEIGHT) + 'px" aria-hidden="true"></div>' : '') + '</div>').join('') +
+        (nowInGrid && date === now.date ? '<div class="pl-now-line" style="top:' + nowTop + 'px" aria-hidden="true"></div>' : '') + '</div>').join('') +
       '</div></div>' + (!hasEvents ? '<p class="pl-empty-week">Aucun événement pour cette ' + (mode === 'week' ? 'semaine' : 'journée') + '.</p>' : '') + '</div>';
     bind();
     if (focusSelector) {
