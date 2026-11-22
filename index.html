@@ -897,28 +897,31 @@ h1{font-size:30px;line-height:39px}h2{font-size:25px;line-height:32px}
 (function () {
   'use strict';
 
-  // Les résultats ci-dessous sont retranscrits depuis les captures fournies.
-  // Les statistiques absentes des captures restent volontairement non renseignées.
+  // Notes synchronisées depuis Mauria.
   const grades = [
-    { id: 'arduino-final', title: 'Epreuve Finale C-microcontrôleur S1', category: 'Informatique', score: 6.50, mean: 9.50, coefficient: 1, date: 'jeudi 22 oct. 2026' },
-    { id: 'maths-final', title: 'Epreuve Finale Mathématiques 2 S1', category: 'Maths', score: 9.50, mean: 8.63, coefficient: 45, date: 'jeudi 15 oct. 2026' },
-    { id: 'maths-project', title: 'Projet Mathématiques 2 S1', category: 'Maths', score: 17.20, mean: 17.66, coefficient: 30, date: 'mardi 13 oct. 2026' },
-    { id: 'maths-continuous', title: 'Contrôle continu Mathématiques 1 S1', category: 'Maths', score: 17.40, mean: 17.15, coefficient: 5, date: 'jeudi 1 oct. 2026' },
-    { id: 'maths-intermediate', title: 'Epreuve Intermédiaire Mathématiques 2 S1', category: 'Maths', score: 18.00, mean: 11.54, coefficient: 20, date: 'jeudi 24 sept. 2026', code: '2627_ADIMAKER_BORDEAUX_A1_MATHS02_EI', min: 1.75, max: 19.25, median: 12.63, deviation: 4.73 },
-    { id: 'arduino-continuous', title: 'Contrôle Continu C-microcontrôleur S1', category: 'Informatique', score: 18.50, mean: 15.88, coefficient: 1, date: 'mercredi 2 sept. 2026', code: '2627_ADIMAKER_BORDEAUX_A1_INFO1_CARDUINO_CC', min: 9.00, max: 18.50, median: 17.00, deviation: 2.94 }
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_INFO1_CARDUINO_EF","title":"Epreuve Finale C-microcontrôleur S1","category":"Informatique","score":6.5,"mean":9.5,"coefficient":1,"date":"jeudi 22 oct. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_INFO1_CARDUINO_EF","min":2,"max":16.5,"median":10.03,"deviation":4.5},
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_MATHS02_EF","title":"Epreuve Finale Mathématiques 2 S1","category":"Maths","score":9.5,"mean":8.63,"coefficient":45,"date":"jeudi 15 oct. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_MATHS02_EF","min":1.5,"max":17,"median":8.25,"deviation":4.33},
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_MATHS02_PROJET","title":"Projet Mathématiques 2 S1","category":"Maths","score":17.2,"mean":17.66,"coefficient":30,"date":"mardi 13 oct. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_MATHS02_PROJET","min":15.75,"max":18.75,"median":18.2,"deviation":1.06},
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_MATHS01_CC","title":"Contrôle continu Mathématiques 1 S1","category":"Maths","score":17.4,"mean":17.15,"coefficient":5,"date":"jeudi 1 oct. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_MATHS01_CC","min":16.03,"max":18.2,"median":17.28,"deviation":0.75},
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_MATHS02_EI","title":"Epreuve Intermédiaire Mathématiques 2 S1","category":"Maths","score":18,"mean":11.54,"coefficient":20,"date":"jeudi 24 sept. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_MATHS02_EI","min":1.75,"max":19.25,"median":12.63,"deviation":4.73},
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_INFO1_CARDUINO_EI","title":"Epreuve Intermédiaire C-microcontrôleur S1","category":"Informatique","score":10,"mean":12.19,"coefficient":1,"date":"lundi 21 sept. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_INFO1_CARDUINO_EI","min":3,"max":18,"median":12.75,"deviation":4.13},
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_MATHS01_EF","title":"Epreuve Finale Mathématiques 1 S1","category":"Maths","score":9,"mean":7.62,"coefficient":50,"date":"vendredi 18 sept. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_MATHS01_EF","min":3,"max":15,"median":7.25,"deviation":3.6},
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_MATHS02_CC","title":"Contrôle continu Mathématiques 2 S1","category":"Maths","score":17.2,"mean":17.66,"coefficient":5,"date":"jeudi 17 sept. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_MATHS02_CC","min":15.75,"max":18.75,"median":18.2,"deviation":1.06},
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_MATHS01_PROJET","title":"Projet Mathématiques 1 S1","category":"Maths","score":17.4,"mean":17.15,"coefficient":45,"date":"mercredi 16 sept. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_MATHS01_PROJET","min":16.03,"max":18.2,"median":17.28,"deviation":0.75},
+    {"id":"2627_ADIMAKER_BORDEAUX_A1_INFO1_CARDUINO_CC","title":"Contrôle Continu C-microcontrôleur S1","category":"Informatique","score":18.5,"mean":15.88,"coefficient":1,"date":"mercredi 2 sept. 2026","code":"2627_ADIMAKER_BORDEAUX_A1_INFO1_CARDUINO_CC","min":9,"max":18.5,"median":17,"deviation":2.94}
   ];
   let selectedFilter = 'Toutes';
   const scoreText = value => value.toFixed(2);
-  const paddedText = value => value.toFixed(2).padStart(5, '0');
+  const paddedText = value => Number.isFinite(value) ? value.toFixed(2).padStart(5, '0') : '—';
   const percentage = value => Math.max(0, Math.min(100, value * 5));
 
   function gradeCard(grade) {
     const M = window.Mauria;
-    const color = grade.score >= grade.mean ? 'nt-good' : 'nt-below';
-    return `<button class="card nt-grade-card" type="button" data-grade="${grade.id}" aria-label="${M.esc(grade.title)}, ${scoreText(grade.score)} sur 20, voir les détails">
+    const color = Number.isFinite(grade.mean) ? (grade.score >= grade.mean ? 'nt-good' : 'nt-below') : '';
+    return `<button class="card nt-grade-card" type="button" data-grade="${M.esc(grade.id)}" aria-label="${M.esc(grade.title)}, ${scoreText(grade.score)} sur 20, voir les détails">
       <span class="nt-score-block"><span class="nt-score-line"><span class="nt-score ${color}">${scoreText(grade.score)}</span><span class="nt-weight" aria-label="coefficient ${grade.coefficient}">×${grade.coefficient}</span></span><span class="nt-average">Moy. ${paddedText(grade.mean)}</span></span>
       <span class="nt-grade-copy"><span class="nt-grade-name" style="display:block">${M.esc(grade.title)}</span><span class="nt-grade-date">${M.esc(grade.date)}</span></span>
-      <span class="nt-grade-right"><span class="badge">${grade.category}</span>${M.icon('external')}</span>
+      <span class="nt-grade-right"><span class="badge">${M.esc(grade.category)}</span>${M.icon('external')}</span>
     </button>`;
   }
 
@@ -949,10 +952,10 @@ h1{font-size:30px;line-height:39px}h2{font-size:25px;line-height:32px}
     const grade = grades.find(item => item.id === id);
     if (!grade) return;
     const M = window.Mauria;
-    const hasFullStatistics = Number.isFinite(grade.min);
+    const hasFullStatistics = [grade.min, grade.max, grade.median, grade.mean, grade.deviation].every(Number.isFinite);
     const statistics = hasFullStatistics
       ? `${distribution(grade)}<dl class="nt-stat-grid">${stat('Moyenne', paddedText(grade.mean))}${stat('Médiane', paddedText(grade.median))}${stat('Min', paddedText(grade.min))}${stat('Max', paddedText(grade.max))}${stat('Écart-type', paddedText(grade.deviation))}${stat('Coefficient', String(grade.coefficient))}${stat('Date', grade.date, 'nt-date-stat')}</dl>`
-      : `<dl class="nt-stat-grid nt-short-stats">${stat('Moyenne', paddedText(grade.mean))}${stat('Coefficient', String(grade.coefficient))}${stat('Date', grade.date, 'nt-date-stat')}</dl><p class="nt-unavailable">Les autres statistiques de cette épreuve ne figurent pas dans les captures fournies.</p>`;
+      : `<dl class="nt-stat-grid nt-short-stats">${stat('Moyenne', paddedText(grade.mean))}${stat('Coefficient', String(grade.coefficient))}${stat('Date', grade.date, 'nt-date-stat')}</dl><p class="nt-unavailable">Statistiques détaillées indisponibles pour cette épreuve.</p>`;
     M.openSheet({
       title: 'Détails de la note',
       className: 'nt-grade-sheet',
@@ -962,12 +965,13 @@ h1{font-size:30px;line-height:39px}h2{font-size:25px;line-height:32px}
 
   function render(container) {
     const M = window.Mauria;
-    container.innerHTML = `<h1 class="sr-only">Notes</h1><section class="nt-view" aria-label="Mes notes"><div class="filter-bar nt-filters" role="group" aria-label="Filtrer les notes">${['Toutes', 'Informatique', 'Maths'].map(filter => `<button type="button" class="filter-button${selectedFilter === filter ? ' is-active' : ''}" data-note-filter="${filter}" aria-pressed="${selectedFilter === filter}">${filter}</button>`).join('')}</div><div class="card nt-notice">${M.icon('info')}<span>Les moyennes ne sont pas encore supportées pour ta classe.</span></div><div class="nt-grade-list">${grades.filter(grade => selectedFilter === 'Toutes' || grade.category === selectedFilter).map(gradeCard).join('')}</div></section>`;
+    const categories = [...new Set(grades.map(grade => grade.category))].sort((a, b) => a.localeCompare(b, 'fr'));
+    container.innerHTML = `<h1 class="sr-only">Notes</h1><section class="nt-view" aria-label="Mes notes"><div class="filter-bar nt-filters" role="group" aria-label="Filtrer les notes">${['Toutes', ...categories].map(filter => `<button type="button" class="filter-button${selectedFilter === filter ? ' is-active' : ''}" data-note-filter="${M.esc(filter)}" aria-pressed="${selectedFilter === filter}">${M.esc(filter)}</button>`).join('')}</div><div class="card nt-notice">${M.icon('info')}<span>Les moyennes ne sont pas encore supportées pour ta classe.</span></div><div class="nt-grade-list">${grades.filter(grade => selectedFilter === 'Toutes' || grade.category === selectedFilter).map(gradeCard).join('')}</div></section>`;
     container.querySelectorAll('[data-note-filter]').forEach(button => {
       button.addEventListener('click', () => {
         selectedFilter = button.dataset.noteFilter;
         render(container);
-        container.querySelector(`[data-note-filter="${selectedFilter}"]`).focus({ preventScroll: true });
+        Array.from(container.querySelectorAll('[data-note-filter]')).find(item => item.dataset.noteFilter === selectedFilter)?.focus({ preventScroll: true });
       });
     });
     container.querySelectorAll('[data-grade]').forEach(button => button.addEventListener('click', () => showGrade(button.dataset.grade)));
